@@ -46,7 +46,6 @@ module safe
 
     output
             data_out    data_out_o,
-            logic       data_out_valid_o,
             logic       a,
             logic       b,
             logic       c,
@@ -77,7 +76,6 @@ logic data_in_handshake;
 logic data_out_handshake;
 
 assign data_in_handshake    = arst_n_i;
-assign data_out_handshake   = data_out_valid_o;
 
 // Input type
 
@@ -266,46 +264,37 @@ end
 always_comb begin
     if(~arst_n_i) begin
         data_out_o = IN_LOCK;
-        data_out_valid_o = 1'b1;
     end
     else begin
         case(state)
             LOCKED:
                 if(is_digit_input) begin
                     data_out_o = IN_CHECK;
-                    data_out_valid_o = 1'b1;
                 end
                 // else begin
                 //     data_out_o = IN_LOCK;
-                //     data_out_valid_o = 1'b1;
                 // end
             CODE_CHECK:
                 if(timeout) begin
                     data_out_o = TIMEOUT;
-                    data_out_valid_o = 1'b1;
                 end 
                 else if(is_submit) begin
                     if(code_match) begin
                         data_out_o = PASS_OK;
-                        data_out_valid_o = 1'b1;
                     end
                     else if(data_out_o != PASS_OK) begin
                         data_out_o = PASS_FAIL;
-                        data_out_valid_o = 1'b1;
                     end       
                 end
                 // else begin
                 //     data_out_o = IN_CHECK;
-                //     data_out_valid_o = 1'b1;
                 // end
             OPEN:
                 if(is_sealed) begin
                     data_out_o = CLOSE;
-                    data_out_valid_o = 1'b1;
                 end
                 // else begin
                 //     data_out_o = IN_OPEN;
-                //     data_out_valid_o = 1'b1;
                 // end
         endcase
     end
