@@ -46,7 +46,14 @@ module safe
 
     output
             data_out    data_out_o,
-            logic       data_out_valid_o
+            logic       data_out_valid_o,
+            logic       a,
+            logic       b,
+            logic       c,
+            logic       d,
+            logic       e,
+            logic       f,
+            logic       g
 );
 
 typedef logic [CODE_LENGTH-1:0][2:0] code_reg;
@@ -300,6 +307,69 @@ always_comb begin
                 //     data_out_o = IN_OPEN;
                 //     data_out_valid_o = 1'b1;
                 // end
+        endcase
+    end
+end
+
+/* Output indicator logic */
+/* Indicator with low level */
+always_comb begin
+    if(~arst_n_i) begin
+        a = 1'b1;
+        b = 1'b1;
+        c = 1'b1;
+        d = 1'b1;
+        e = 1'b1;
+        f = 1'b1;
+        g = 1'b1;
+    end
+    else begin
+        case(data_out_o)
+            IN_CHECK: begin
+                a = 1'b1;
+                b = 1'b0;
+                c = 1'b0;
+                d = 1'b1;
+                e = 1'b1;
+                f = 1'b1;
+                g = 1'b1;
+            end
+            PASS_OK: begin
+                a = 1'b0;
+                b = 1'b0;
+                c = 1'b0;
+                d = 1'b0;
+                e = 1'b0;
+                f = 1'b0;
+                g = 1'b1;
+            end
+            PASS_FAIL: begin
+                a = 1'b0;
+                b = 1'b1;
+                c = 1'b1;
+                d = 1'b1;
+                e = 1'b0;
+                f = 1'b0;
+                g = 1'b0;
+            end
+            TIMEOUT: begin
+                a = 1'b1;
+                b = 1'b0;
+                c = 1'b0;
+                d = 1'b1;
+                e = 1'b1;
+                f = 1'b1;
+                g = 1'b0;
+            end
+            CLOSE: begin
+                a = 1'b0;
+                b = 1'b1;
+                c = 1'b1;
+                d = 1'b0;
+                e = 1'b0;
+                f = 1'b0;
+                g = 1'b1;
+            end
         endcase
     end
 end
